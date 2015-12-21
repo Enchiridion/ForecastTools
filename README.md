@@ -2,7 +2,7 @@
 
 Wrapper for [Forecast.io](http://forecast.io/) [API](https://developer.forecast.io/) that supports many simultaneous API calls, substantially reducing wait time for any applications needing to look up weather conditions en masse.
 
-*Note: If you will never want to make more than one request at a time or cache the results (coming later), you might want to try [Guilherm Uhelski](https://github.com/guhelski)’s simpler [forecast-php](https://github.com/guhelski/forecast-php) project.*
+*Note: If you will never want to make more than one request at a time or cache the results, you might want to try [Guilherm Uhelski](https://github.com/guhelski)’s simpler [forecast-php](https://github.com/guhelski/forecast-php) project.*
 
 ### About the Forecast API
 
@@ -58,6 +58,19 @@ Here is how you could copy the files to your server if your web root is `/var/ww
     $ rm -f ForecastTools.zip
     $ mv ForecastTools-master ForecastTools
 
+#### Composer (advanced)
+
+- Install composer if you haven't already done so, go [here](https://getcomposer.org/doc/00-intro.md) for more details on composer
+- Add the following to your composer.json file
+
+
+        "require": {
+        
+            "kabudu/forecast-tools": "1.2"
+            
+        }
+        
+- Run composer install    
 
 ## Structure
 
@@ -168,6 +181,17 @@ Multiple simultaneous requests:
       array('latitude' => float, 'longitude' => float, 'time' => int),
       array('latitude' => float, 'longitude' => float, 'time' => int),
     );
+    $responses = $forecast->getData($requests);
+    
+Using the redis cache handler:
+    
+    $predisClient = new \Predis\Client();
+    $cacheHandler = new \ForecastTools\Cache\RedisCacheHandler($predisClient);
+    
+    $requests = array(
+          array('latitude' => float, 'longitude' => float, 'time' => int, 'cache_enabled' => true, 'cache_handler' => $cacheHandler, 'cache_timeout' => int),          
+        );
+        
     $responses = $forecast->getData($requests);
 
 ### ForecastResponse
@@ -282,6 +306,10 @@ The errors do not happen when doing fewer requests in a short period, so I attri
 - Version 1.1: 2 March 2015 by Shannon Little
   - Added ability to cache data
   - Added methods to get nearest storm data
+- Version 1.2: 21 June 2015 by Kamba Abudu
+  - Updated library to use namespaces and adhere to PSR1/PSR2/PSR4
+  - Implemented an interface for cache handlers and a Redis cache handler
+  - Added ability to cache data for the multi-curl context
 
 ## Improvements to come
 
